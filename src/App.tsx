@@ -5,7 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 
 
 const fetchRepos = async (username: string) => {
-  const res = await fetch(`https://api.github.com/users/${username}/repos`);
+
+  const res = await fetch(`https://api.github.com/users/${username}/repos`, {
+  });
   if (!res.ok) throw new Error('Failed to fetch repos');
   return res.json();
 };
@@ -14,18 +16,18 @@ function App() {
   const [username, setUsername] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const { data, isLoading, error, status  } = useQuery({
+  const { data, isLoading, error, refetch  } = useQuery({
     queryKey: ['repos', username],
     queryFn: () => fetchRepos(username),
-    enabled: submitted && username !== '', 
+    enabled: false, 
 
   });
 
-  useEffect(() => {
-  if (status === 'success') {
-    setSubmitted(false); 
-  }
-}, [status]);
+//   useEffect(() => {
+//   if (status === 'success') {
+//     setSubmitted(false); 
+//   }
+// }, [status]); didn't work
 
   const handleUsernameChange = (e: any) => {
     setUsername(e.target.value);
@@ -33,6 +35,7 @@ function App() {
 
   const handleSearchClick = () => {
     if (username) {
+       refetch(); 
       setSubmitted(true);
     }
   };
